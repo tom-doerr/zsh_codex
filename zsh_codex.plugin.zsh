@@ -7,8 +7,6 @@
 create_completion() {
     # Get the text typed until now.
     text=${BUFFER}
-    # Write the current timestamp to the file /home/tom/git/zsh_codex/test.txt
-    echo $(date +"%T") >> /home/tom/git/zsh_codex/test.txt
     completion=$(printf "$text" | ./create_completion.py)
     # Add completion to the current buffer.
     BUFFER="${text}${completion}"
