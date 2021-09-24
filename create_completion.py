@@ -24,7 +24,7 @@ openai.api_key = SECRET_KEY
 input_prompt = '#!/bin/zsh\n\n' + sys.stdin.read()
 
 
-response = openai.Completion.create(engine='davinci-codex', prompt=input_prompt, temperature=0.5, max_tokens=32, stream=STREAM)
+response = openai.Completion.create(engine='davinci-codex', prompt=input_prompt, temperature=0.5, max_tokens=16, stream=STREAM)
 # print("response:", response)
 
 # completion = response['choices'][0]['text']
