@@ -1,6 +1,6 @@
 ## What is it?
 
-This is a ZSH plugin that uses OpenAI's Codex to complete text.
+This is a ZSH plugin that uses OpenAI Codex to complete text.
 
 ## How do I install it?
 
