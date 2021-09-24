@@ -32,8 +32,6 @@ input_prompt = '#!/bin/zsh\n\n' + sys.stdin.read()
 
 
 response = openai.Completion.create(engine='davinci-codex', prompt=input_prompt, temperature=0.5, max_tokens=16, stream=STREAM)
-# print("response:", response)
-
 # completion = response['choices'][0]['text']
 if STREAM:
     while True:
@@ -45,7 +43,14 @@ if STREAM:
         print("completion:", completion)
         # print(next(response))
 else:
-    completion = response['choices'][0]['text']
-    print(completion)
+    completion_all = response['choices'][0]['text']
+    completion_list = completion_all.split('\n')
+    if completion_list[0]:
+        print(completion_list[0])
+    elif len(completion_list) == 1:
+        print('')
+    else:
+        print('\n' + completion_list[1])
+
 
 
