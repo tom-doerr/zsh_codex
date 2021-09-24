@@ -6,8 +6,15 @@ import os
 import json
 
 STREAM = False
+
+
+# Get config dir from environment or default to ~/.config
+CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
+API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openai_api_keys.json')
+
 # Read the organization_id and secret_key from ~/.config/openai_api_keys.json.
-API_KEYS_LOCATION=os.path.expanduser('~/.config/openai_api_keys.json')
+# API_KEYS_LOCATION=os.path.expanduser('~/.config/openai_api_keys.json')
+
 try:
     with open(API_KEYS_LOCATION) as f:
         API_KEYS = json.load(f)
