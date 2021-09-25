@@ -20,6 +20,23 @@ API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
 # If you don't see your organization ID in the file you can get it from the
 # OpenAI web site: https://openai.com/organizations
 
+
+def create_template_ini_file():
+    """
+    If the ini file does not exist create it and add the organization_id and
+    secret_key
+    """
+    if not os.path.isfile(API_KEYS_LOCATION):
+        with open(API_KEYS_LOCATION, 'w') as f:
+            f.write('[openai]\n')
+            f.write('organization_id=\n')
+            f.write('secret_key=\n')
+
+        print('OpenAI API config file created at {}'.format(API_KEYS_LOCATION))
+        print('Please edit it and add your organization ID and secret key')
+        sys.exit(1)
+
+
 try:
     with open(API_KEYS_LOCATION) as f:
         config = f.read()
@@ -30,7 +47,7 @@ try:
     secret_key = config.split('secret_key')[1].split('=')[1].split('\n')[0].strip()
 except:
     print("Unable to read openaiapirc at {}".format(API_KEYS_LOCATION))
-    sys.exit(1)
+    create_template_ini_file()
 
 
 # Remove the quotes if there are any.
