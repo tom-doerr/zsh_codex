@@ -38,7 +38,9 @@
 
 ## What is it?
 
-This is a ZSH plugin that enables you to use OpenAI Codex in the command line.
+This is a ZSH plugin that enables you to use OpenAI Codex in the command line. OpenAI Codex is the model that also powers GitHub Copilot.
+To use this plugin you need to get access to OpenAI's [Codex API](https://openai.com/blog/openai-codex/).
+
 
 ## How do I install it?
 
