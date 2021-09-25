@@ -33,7 +33,7 @@
 </p>
 
 <p align="center">
-    <img src='https://github.com/tom-doerr/bins/raw/main/zsh_codex/zc3.gif'>
+    <img src='https://github.com/tom-doerr/bins/raw/main/zsh_codex/zc4.gif'>
 </p>
 
 ## What is it?
