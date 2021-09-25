@@ -16,7 +16,6 @@ create_completion() {
 
 # Bind the create_completion function to a key.
 zle -N create_completion
-bindkey '^X' create_completion
 
 
 
