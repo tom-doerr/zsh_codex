@@ -17,13 +17,12 @@ This is a ZSH plugin that uses OpenAI Codex to complete text.
     bindkey '^X' create_completion
 ```
 
-3. Create a file called `openai_api_keys.json` in `~/.config` with your ORGANIZATION_ID and SECRET_KEY.
+3. Create a file called `openaiapirc` in `~/.config` with your ORGANIZATION_ID and SECRET_KEY.
 
 ```
-    {
-        "ORGANIZATION_ID": "...",
-        "SECRET_KEY": "..."
-    }
+[openai]
+organization_id = ...
+secret_key = ...
 ```
 
 4. Run `zsh`, start typing and complete it using `^X`!
