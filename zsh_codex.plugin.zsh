@@ -7,7 +7,7 @@
 create_completion() {
     # Get the text typed until now.
     text=${BUFFER}
-    completion=$(printf "$text" | $ZSH_CUSTOM/plugins/zsh_codex/create_completion.py)
+    completion=$(echo -n "$text" | $ZSH_CUSTOM/plugins/zsh_codex/create_completion.py)
     # Add completion to the current buffer.
     BUFFER="${text}${completion}"
     # Put the cursor at the end of the line.
