@@ -34,7 +34,9 @@
 
 <p align="center">
     <img src='https://github.com/tom-doerr/bins/raw/main/zsh_codex/zc4.gif'>
+    You just need to write a comment or variable name and the AI will write the corresponding code.
 </p>
+
 
 ## What is it?
 
