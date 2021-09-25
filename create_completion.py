@@ -3,29 +3,45 @@
 import openai
 import sys
 import os
-import json
 
 STREAM = False
 
 
 # Get config dir from environment or default to ~/.config
 CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
-API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openai_api_keys.json')
+API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
 
-# Read the organization_id and secret_key from ~/.config/openai_api_keys.json.
-# API_KEYS_LOCATION=os.path.expanduser('~/.config/openai_api_keys.json')
+# Read the organization_id and secret_key from the ini file ~/.config/openaiapirc
+# The format is:
+# [openai]
+# organization_id=<your organization ID>
+# secret_key=<your secret key>
+
+# If you don't see your organization ID in the file you can get it from the
+# OpenAI web site: https://openai.com/organizations
 
 try:
     with open(API_KEYS_LOCATION) as f:
-        API_KEYS = json.load(f)
-    ORGANIZATION_ID = API_KEYS['ORGANIZATION_ID']
-    SECRET_KEY = API_KEYS['SECRET_KEY']
-except FileNotFoundError:
-    sys.exit('Please create a file called openai_api_keys.json in ~/.config with your ORGANIZATION_ID and SECRET_KEY.')
+        config = f.read()
+
+    config = '\n' + config 
+    # Reading the values works even when there are spaces around the = sign.
+    organization_id = config.split('organization_id')[1].split('=')[1].split('\n')[0].strip()
+    secret_key = config.split('secret_key')[1].split('=')[1].split('\n')[0].strip()
+except:
+    print("Unable to read openaiapirc at {}".format(API_KEYS_LOCATION))
+    sys.exit(1)
 
 
-openai.organization = ORGANIZATION_ID
-openai.api_key = SECRET_KEY
+# Remove the quotes if there are any.
+if organization_id[0] == '"' and organization_id[-1] == '"':
+    organization_id = organization_id[1:-1]
+
+if secret_key[0] == '"' and secret_key[-1] == '"':
+    secret_key = secret_key[1:-1]
+
+openai.api_key = secret_key
+openai.organization = organization_id
 
 # Read the input prompt from stdin.
 input_prompt = '#!/bin/zsh\n\n' + sys.stdin.read()
