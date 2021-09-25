@@ -1,7 +1,7 @@
 <h1 align="center">⌨️ 🦾 Zsh Codex</h1>
 
 <p align="center">
-    AI in the commandline.
+    AI in the command line.
 </p>
 
 <p align="center">
@@ -38,7 +38,7 @@
 
 ## What is it?
 
-This is a ZSH plugin that uses OpenAI Codex to complete text.
+This is a ZSH plugin that enables you to use OpenAI Codex in the command line.
 
 ## How do I install it?
 
