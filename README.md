@@ -86,5 +86,9 @@ zsh-syntax-highlighting: unhandled ZLE widget 'create_completion'
 zsh-syntax-highlighting: (This is sometimes caused by doing `bindkey <keys> create_completion` without creating the 'create_completion' widget with `zle -N` or `zle -C`.)
 ```
 
-Make sure to disable other ZSH plugins!
+Add the line 
+```
+zle -N create_completion
+```
+before you call `bindkey` but after loading the plugin (`plugins=(zsh_codex)`).
 
