@@ -78,7 +78,9 @@ if STREAM:
 else:
     completion_all = response['choices'][0]['text']
     completion_list = completion_all.split('\n')
-    if completion_list[0]:
+    if completion_all[:2] == '\n\n':
+        print(completion_all)
+    elif completion_list[0]:
         print(completion_list[0])
     elif len(completion_list) == 1:
         print('')
