@@ -48,20 +48,25 @@ To use this plugin you need to get access to OpenAI's [Codex API](https://openai
 
 ## How do I install it?
 
-1. Download the ZSH plugin.
+1. Install the OpenAI package.
+```
+pip3 install openai
+```
+
+2. Download the ZSH plugin.
 
 ```
-    $ git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/plugins/ 
+    $ git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/ 
 ```
 
-2. Add the following to your `.zshrc` file.
+3. Add the following to your `.zshrc` file.
 
 ```
     plugins=(zsh_codex)
     bindkey '^X' create_completion
 ```
 
-3. Create a file called `openaiapirc` in `~/.config` with your ORGANIZATION_ID and SECRET_KEY.
+4. Create a file called `openaiapirc` in `~/.config` with your ORGANIZATION_ID and SECRET_KEY.
 
 ```
 [openai]
@@ -69,4 +74,4 @@ organization_id = ...
 secret_key = ...
 ```
 
-4. Run `zsh`, start typing and complete it using `^X`!
+5. Run `zsh`, start typing and complete it using `^X`!
