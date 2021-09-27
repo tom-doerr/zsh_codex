@@ -79,7 +79,7 @@ secret_key = ...
 
 ## Troubleshooting 
 
-### unhandled ZLE widget 'create_completion'
+### Unhandled ZLE widget 'create_completion'
 
 ```
 zsh-syntax-highlighting: unhandled ZLE widget 'create_completion'
@@ -92,7 +92,7 @@ zle -N create_completion
 ```
 before you call `bindkey` but after loading the plugin (`plugins=(zsh_codex)`).
 
-### already exists and is not an empty directory
+### Already exists and is not an empty directory
 ```
 fatal: destination path '~.oh-my-zsh/custom/plugins'
 ```
