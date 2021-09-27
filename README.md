@@ -75,3 +75,23 @@ secret_key = ...
 ```
 
 5. Run `zsh`, start typing and complete it using `^X`!
+
+
+## Troubleshooting & temporary fixes
+
+### unhandled ZLE widget 'create_completion'
+
+```
+zsh-syntax-highlighting: unhandled ZLE widget 'create_completion'
+zsh-syntax-highlighting: (This is sometimes caused by doing `bindkey <keys> create_completion` without creating the 'create_completion' widget with `zle -N` or `zle -C`.)
+```
+
+Make sure to disable other ZSH plugins!
+
+### no such file or directory: .oh-my-zsh/custom/plugins/zsh_codex/create_completion.py
+
+Move the `.oh-my-zsh/custom/plugins/zsh_codex` folder to `.oh-my-zsh/custom/custom/plugins/zsh_codex/`.
+
+### ModuleNotFoundError: No module named 'openai'
+
+Install the OpenAI python package: `pip install openai`
