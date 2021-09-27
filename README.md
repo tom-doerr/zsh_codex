@@ -92,3 +92,11 @@ zle -N create_completion
 ```
 before you call `bindkey` but after loading the plugin (`plugins=(zsh_codex)`).
 
+### already exists and is not an empty directory
+```
+fatal: destination path '~.oh-my-zsh/custom/plugins'
+```
+Try to download the ZSH plugin again.
+```
+git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex
+```
