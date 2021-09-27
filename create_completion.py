@@ -64,7 +64,7 @@ openai.organization = organization_id
 input_prompt = '#!/bin/zsh\n\n' + sys.stdin.read()
 
 
-response = openai.Completion.create(engine='davinci-codex', prompt=input_prompt, temperature=0.5, max_tokens=16, stream=STREAM)
+response = openai.Completion.create(engine='davinci-codex', prompt=input_prompt, temperature=0.5, max_tokens=32, stream=STREAM)
 # completion = response['choices'][0]['text']
 if STREAM:
     while True:
