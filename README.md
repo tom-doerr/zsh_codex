@@ -77,7 +77,7 @@ secret_key = ...
 5. Run `zsh`, start typing and complete it using `^X`!
 
 
-## Troubleshooting & temporary fixes
+## Troubleshooting 
 
 ### unhandled ZLE widget 'create_completion'
 
