@@ -88,10 +88,3 @@ zsh-syntax-highlighting: (This is sometimes caused by doing `bindkey <keys> crea
 
 Make sure to disable other ZSH plugins!
 
-### no such file or directory: .oh-my-zsh/custom/plugins/zsh_codex/create_completion.py
-
-Move the `.oh-my-zsh/custom/plugins/zsh_codex` folder to `.oh-my-zsh/custom/custom/plugins/zsh_codex/`.
-
-### ModuleNotFoundError: No module named 'openai'
-
-Install the OpenAI python package: `pip install openai`
