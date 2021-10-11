@@ -60,9 +60,16 @@ pip3 install openai
 ```
 
 3. Add the following to your `.zshrc` file.
-
+Using oh-my-zsh
 ```
     plugins=(zsh_codex)
+    bindkey '^X' create_completion
+```
+Without oh-my-zsh
+```
+    # in your/custom/path you need to have a "plugins" folder and in there you clone the repository as zsh_codex
+    export ZSH_CUSTOM="your/custom/path"
+    source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
     bindkey '^X' create_completion
 ```
 
