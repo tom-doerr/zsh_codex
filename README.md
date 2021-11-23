@@ -7,27 +7,27 @@
 <p align="center">
     <a href="https://github.com/tom-doerr/zsh_codex/stargazers"
         ><img
-            src="https://img.shields.io/github/stars/tom-doerr/zsh_codex"
+            src="https://img.shields.io/github/stars/tom-doerr/zsh_codex?colorA=2c2837&style=for-the-badge&logo=starship style=flat-square"
             alt="Repository's starts"
     /></a>
     <a href="https://github.com/tom-doerr/zsh_codex/issues"
         ><img
-            src="https://img.shields.io/github/issues-raw/tom-doerr/zsh_codex"
+            src="https://img.shields.io/github/issues-raw/tom-doerr/zsh_codex?colorA=2c2837&style=for-the-badge&logo=starship style=flat-square"
             alt="Issues"
     /></a>
     <a href="https://github.com/tom-doerr/zsh_codex/blob/main/LICENSE"
         ><img
-            src="https://img.shields.io/github/license/tom-doerr/zsh_codex"
+            src="https://img.shields.io/github/license/tom-doerr/zsh_codex?colorA=2c2837&style=for-the-badge&logo=starship style=flat-square"
             alt="License"
     /><br />
     <a href="https://github.com/tom-doerr/zsh_codex/commits/main"
 		><img
-			src="https://img.shields.io/github/last-commit/tom-doerr/zsh_codex/main"
+			src="https://img.shields.io/github/last-commit/tom-doerr/zsh_codex/main?colorA=2c2837&style=for-the-badge&logo=starship style=flat-square"
 			alt="Latest commit"
     /></a>
     <a href="https://github.com/tom-doerr/zsh_codex"
         ><img
-            src="https://img.shields.io/github/repo-size/tom-doerr/zsh_codex"
+            src="https://img.shields.io/github/repo-size/tom-doerr/zsh_codex?colorA=2c2837&style=for-the-badge&logo=starship style=flat-square"
             alt="GitHub repository size"
     /></a>
 </p>
