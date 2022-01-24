@@ -110,4 +110,4 @@ git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins
 ```
 -------------------------------------------------------------------
 
-[Traffic Statistics](https://github.com/tom-doerr/github_repo_stats_data/raw/master/tom-doerr/zsh_codex/latest-report/report.pdf)
+[Traffic Statistics](https://tom-doerr.github.io/github_repo_stats_data/tom-doerr/zsh_codex/latest-report/report.html)
