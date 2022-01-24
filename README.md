@@ -108,3 +108,6 @@ Try to download the ZSH plugin again.
 ```
 git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex
 ```
+-------------------------------------------------------------------
+
+[Traffic Statistics](https://github.com/tom-doerr/github_repo_stats_data/raw/master/tom-doerr/zsh_codex/latest-report/report.pdf)
