@@ -108,6 +108,14 @@ Try to download the ZSH plugin again.
 ```
 git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex
 ```
+
+## More examples of usage
+<p align="center">
+    <img src='https://github.com/tom-doerr/bins/raw/main/zsh_codex/update_insert/all.gif'>
+    <p align="center">
+    </p>
+</p>
+
 -------------------------------------------------------------------
 
 [Traffic Statistics](https://tom-doerr.github.io/github_repo_stats_data/tom-doerr/zsh_codex/latest-report/report.html)
