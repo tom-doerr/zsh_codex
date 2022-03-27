@@ -54,21 +54,22 @@ def initialize_openai_api():
 
 initialize_openai_api()
 
+cursor_position_char = int(sys.argv[1])
+
 # Read the input prompt from stdin.
-input_prompt = '#!/bin/zsh\n\n' + sys.stdin.read()
+buffer = sys.stdin.read()
+prompt_prefix = '#!/bin/zsh\n\n' + buffer[:cursor_position_char]
+prompt_suffix = buffer[cursor_position_char:]
 
+response = openai.Completion.create(engine='code-davinci-002', prompt=prompt_prefix, suffix=prompt_suffix, temperature=0.5, max_tokens=50, stream=STREAM)
 
-response = openai.Completion.create(engine='code-davinci-001', prompt=input_prompt, temperature=0.5, max_tokens=50, stream=STREAM)
-# completion = response['choices'][0]['text']
 if STREAM:
     while True:
         next_response = next(response)
         print("next_response:", next_response)
-        # next_response['choices'][0]['finish_reason']
         print("        next_response['choices'][0]['finish_reason']:",         next_response['choices'][0]['finish_reason'])
         completion = next_response['choices'][0]['text']
         print("completion:", completion)
-        # print(next(response))
 else:
     completion_all = response['choices'][0]['text']
     completion_list = completion_all.split('\n')
