@@ -119,4 +119,5 @@ git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins
 -------------------------------------------------------------------
 
 [fish version](https://github.com/tom-doerr/codex.fish)
+
 [Traffic Statistics](https://tom-doerr.github.io/github_repo_stats_data/tom-doerr/zsh_codex/latest-report/report.html)
