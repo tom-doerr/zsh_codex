@@ -109,7 +109,8 @@ Try to download the ZSH plugin again.
 git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex
 ```
 
-## More examples of usage
+
+## More usage examples
 <p align="center">
     <img src='https://github.com/tom-doerr/bins/raw/main/zsh_codex/update_insert/all.gif'>
     <p align="center">
