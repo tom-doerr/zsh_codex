@@ -47,7 +47,7 @@ To use this plugin you need to get access to OpenAI's [Codex API](https://openai
 
 
 ## How do I install it?
-
+### Manual Installation
 1. Install the OpenAI package.
 ```
 pip3 install openai
@@ -84,6 +84,9 @@ secret_key = ...
 
 5. Run `zsh`, start typing and complete it using `^X`!
 
+### Fig Installation
+
+<a href="https://fig.io/plugins/other/zsh_codex_tom-doerr" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
 
 ## Troubleshooting 
 
