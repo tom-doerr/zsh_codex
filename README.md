@@ -86,10 +86,6 @@ secret_key = ...
 
 ### Fig Installation
 
-[Fig](https://fig.io) adds apps, shortcuts, and autocomplete to your existing terminal.
-
-Install `zsh_codex` in just one click.
-
 <a href="https://fig.io/plugins/other/zsh_codex_tom-doerr" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
 
 ## Troubleshooting 
