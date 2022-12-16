@@ -47,15 +47,21 @@
 ## What is it?
 
 This is a ZSH plugin that enables you to use OpenAI's powerful Codex AI in the command line. OpenAI Codex is the AI that also powers GitHub Copilot.
-To use this plugin you need to get access to OpenAI's [Codex API](https://openai.com/blog/openai-codex/).
+To use this plugin you'll need to authenatice with [LLMHub](https://www.llmhub.com) - details are below.
 
 
 ## How do I install it?
 ### Manual Installation
-1. Install the OpenAI package.
+1. Install the LLMHub package.
 ```
-pip3 install openai
+pip3 install llmhub
 ```
+
+2. Authenticate against LLMHub.
+```
+llmhub auth
+```
+This will open a single-sign on page, and everything should be setup after that.
 
 2. Download the ZSH plugin.
 
@@ -76,14 +82,6 @@ Without oh-my-zsh:
     export ZSH_CUSTOM="your/custom/path"
     source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
     bindkey '^X' create_completion
-```
-
-4. Create a file called `openaiapirc` in `~/.config` with your ORGANIZATION_ID and SECRET_KEY.
-
-```
-[openai]
-organization_id = ...
-secret_key = ...
 ```
 
 5. Run `zsh`, start typing and complete it using `^X`!
