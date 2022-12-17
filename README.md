@@ -57,7 +57,7 @@ To use this plugin you'll need to authenatice with [LLMHub](https://www.llmhub.c
 pip3 install llmhub
 ```
 
-2. Authenticate against LLMHub.
+2. Authenticate against LLMHub **once**.
 ```
 llmhub auth
 ```
