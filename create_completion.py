@@ -5,8 +5,6 @@ import sys
 import os
 import configparser
 
-STREAM = False
-
 LLM = LLMHubClient("https://www.llmhub.com/2/functions/34/share")
 
 cursor_position_char = int(sys.argv[1])
@@ -18,16 +16,7 @@ prompt_suffix = buffer[cursor_position_char:]
 
 response = LLM.run({"prefix": prompt_prefix,
                     "suffix": prompt_suffix,})
-                    #"stream": STREAM,})
 
-# if STREAM:
-#     while True:
-#         next_response = next(response)
-#         print("next_response:", next_response)
-#         print("        next_response['choices'][0]['finish_reason']:",         next_response['choices'][0]['finish_reason'])
-#         completion = next_response['choices'][0]['text']
-#         print("completion:", completion)
-# else:
 completion_all = response["output"]
 completion_list = completion_all.split('\n')
 if completion_all[:2] == '\n\n':
