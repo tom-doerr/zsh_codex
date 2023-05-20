@@ -61,7 +61,7 @@ buffer = sys.stdin.read()
 prompt_prefix = '#!/bin/zsh\n\n' + buffer[:cursor_position_char]
 prompt_suffix = buffer[cursor_position_char:]
 
-response = openai.Completion.create(engine='code-davinci-002', prompt=prompt_prefix, suffix=prompt_suffix, temperature=0.5, max_tokens=50, stream=STREAM)
+response = openai.Completion.create(engine='text-davinci-003', prompt=prompt_prefix, suffix=prompt_suffix, temperature=0.5, max_tokens=50, stream=STREAM)
 
 if STREAM:
     while True:
