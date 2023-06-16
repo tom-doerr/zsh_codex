@@ -40,10 +40,6 @@
 </p>
 
 
-**Newer Version available**  (`pip install kiera`)
-
-[More Info](https://kiera.ai)
-
 ## What is it?
 
 This is a ZSH plugin that enables you to use OpenAI's powerful Codex AI in the command line. OpenAI Codex is the AI that also powers GitHub Copilot.
