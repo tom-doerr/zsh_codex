@@ -63,7 +63,7 @@ full_command = prompt_prefix + prompt_suffix
 response = openai.ChatCompletion.create(model=model, messages=[
     {
         "role":'system',
-        "content": "you are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need any other include any explain",
+        "content": "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation",
     },
     {
         "role":'user',
