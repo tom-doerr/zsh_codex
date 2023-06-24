@@ -5,9 +5,6 @@ import sys
 import os
 import configparser
 
-STREAM = False
-
-
 # Get config dir from environment or default to ~/.config
 CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
 API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
@@ -38,7 +35,6 @@ def create_template_ini_file():
                 'https://openai.com/blog/openai-codex/')
         sys.exit(1)
 
-
 def initialize_openai_api():
     """
     Initialize the OpenAI API
@@ -60,27 +56,17 @@ cursor_position_char = int(sys.argv[1])
 buffer = sys.stdin.read()
 prompt_prefix = '#!/bin/zsh\n\n' + buffer[:cursor_position_char]
 prompt_suffix = buffer[cursor_position_char:]
+full_command = prompt_prefix + prompt_suffix
+response = openai.ChatCompletion.create(model='gpt-3.5-turbo-0613', messages=[
+    {
+        "role":'system',
+        "content": "you are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need any other include any explain",
+    },
+    {
+        "role":'user',
+        "content": full_command,
+    }
+])
+completed_command = response['choices'][0]['message']['content']
 
-response = openai.Completion.create(engine='code-davinci-002', prompt=prompt_prefix, suffix=prompt_suffix, temperature=0.5, max_tokens=50, stream=STREAM)
-
-if STREAM:
-    while True:
-        next_response = next(response)
-        print("next_response:", next_response)
-        print("        next_response['choices'][0]['finish_reason']:",         next_response['choices'][0]['finish_reason'])
-        completion = next_response['choices'][0]['text']
-        print("completion:", completion)
-else:
-    completion_all = response['choices'][0]['text']
-    completion_list = completion_all.split('\n')
-    if completion_all[:2] == '\n\n':
-        print(completion_all)
-    elif completion_list[0]:
-        print(completion_list[0])
-    elif len(completion_list) == 1:
-        print('')
-    else:
-        print('\n' + completion_list[1])
-
-
-
+sys.stdout.write(f"\n{completed_command}")
