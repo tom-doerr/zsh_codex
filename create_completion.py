@@ -48,7 +48,12 @@ def initialize_openai_api():
 
     openai.organization_id = config['openai']['organization_id'].strip('"').strip("'")
     openai.api_key = config['openai']['secret_key'].strip('"').strip("'")
-    model = config['openai']['model'].strip('"').strip("'")
+
+    if 'model' in config['openai']:
+        model = config['openai']['model'].strip('"').strip("'")
+    else:
+        model = 'gpt-3.5-turbo'
+
     return model
 
 model = initialize_openai_api()
