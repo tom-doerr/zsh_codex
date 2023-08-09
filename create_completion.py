@@ -10,15 +10,22 @@ import subprocess
 import json
 import time
 
+
 # Get config dir from environment or default to ~/.config
 CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
 API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
+
 
 CACHE_DIR = os.path.join(CONFIG_DIR, 'cache/zsh_codex')
 os.makedirs(CACHE_DIR, exist_ok=True)
 SYSTEM_INFO_CACHE_FILE = os.path.join(CACHE_DIR, 'system_info.json')
 INSTALLED_PACKAGES_CACHE_FILE = os.path.join(CACHE_DIR, 'installed_packages.json')
 CACHE_EXPIRATION_TIME = 60 * 60 * 24  # 24 hours
+
+
+
+
+
 
 
 def load_or_save_to_cache(filename, default_func):
@@ -36,7 +43,6 @@ def load_or_save_to_cache(filename, default_func):
         json.dump(data, f)
 
     return data['value']
-
 
 # Read the organization_id and secret_key from the ini file ~/.config/openaiapirc
 # The format is:
@@ -112,14 +118,17 @@ async def get_system_info():
 system_info = asyncio.run(get_system_info())
 
 
+# last ten recent packages
 async def get_installed_packages():
     # Get list of installed packages
     def default_func():
         try:
             if system_info['os'] == 'Linux':
-                return subprocess.check_output(['dpkg', '--get-selections']).decode('utf-8')
+                command = "dpkg --get-selections | head -n 10"
+                return subprocess.check_output(command, shell=True).decode('utf-8')
             elif system_info['os'] == 'Darwin':
-                return subprocess.check_output(['brew', 'list']).decode('utf-8')
+                command = "brew list -1t 2> /dev/null | head -n 10"
+                return subprocess.check_output(command, shell=True).decode('utf-8')
             else:
                 return "Unsupported OS for package listing"
         except subprocess.CalledProcessError as e:
@@ -127,6 +136,7 @@ async def get_installed_packages():
 
     return load_or_save_to_cache(INSTALLED_PACKAGES_CACHE_FILE, default_func)
 
+    
 
 installed_packages = asyncio.run(get_installed_packages())
 
