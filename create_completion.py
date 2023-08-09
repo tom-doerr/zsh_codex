@@ -6,12 +6,36 @@ import sys
 import os
 import configparser
 import platform
-import functools
 import subprocess
+import json
+import time
 
 # Get config dir from environment or default to ~/.config
 CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
 API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
+
+CACHE_DIR = os.path.join(CONFIG_DIR, 'cache/zsh_codex')
+os.makedirs(CACHE_DIR, exist_ok=True)
+SYSTEM_INFO_CACHE_FILE = os.path.join(CACHE_DIR, 'system_info.json')
+INSTALLED_PACKAGES_CACHE_FILE = os.path.join(CACHE_DIR, 'installed_packages.json')
+CACHE_EXPIRATION_TIME = 60 * 60 * 24  # 24 hours
+
+
+def load_or_save_to_cache(filename, default_func):
+    if os.path.exists(filename):
+        with open(filename, 'r') as f:
+            data = json.load(f)
+        if time.time() - data['timestamp'] < CACHE_EXPIRATION_TIME:
+            return data['value']
+
+    data = {
+        'value': default_func(),
+        'timestamp': time.time()
+    }
+    with open(filename, 'w') as f:
+        json.dump(data, f)
+
+    return data['value']
 
 
 # Read the organization_id and secret_key from the ini file ~/.config/openaiapirc
@@ -23,8 +47,6 @@ API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
 # If you don't see your organization ID in the file you can get it from the
 # OpenAI web site: https://openai.com/organizations
 
-
-@functools.lru_cache(maxsize=None)
 async def create_template_ini_file():
     """
     If the ini file does not exist create it and add the organization_id and
@@ -45,7 +67,6 @@ async def create_template_ini_file():
         sys.exit(1)
 
 
-@functools.lru_cache(maxsize=None)
 async def initialize_openai_api():
     """
     Initialize the OpenAI API
@@ -72,36 +93,39 @@ model = asyncio.run(initialize_openai_api())
 cursor_position_char = int(sys.argv[1])
 
 
-@functools.lru_cache(maxsize=None)
 async def get_system_info():
     """
     Gather system information
     """
-    system_info = {
-        "os": platform.system(),
-        "os_version": platform.version(),
-        "architecture": platform.architecture()[0],
-        "processor": platform.processor()
-    }
-    return system_info
+
+    def default_func():
+        return {
+            "os": platform.system(),
+            "os_version": platform.version(),
+            "architecture": platform.architecture()[0],
+            "processor": platform.processor()
+        }
+
+    return load_or_save_to_cache(SYSTEM_INFO_CACHE_FILE, default_func)
 
 
 system_info = asyncio.run(get_system_info())
 
 
-@functools.lru_cache(maxsize=None)
 async def get_installed_packages():
     # Get list of installed packages
-    try:
-        if system_info['os'] == 'Linux':
-            installed_packages = subprocess.check_output(['dpkg', '--get-selections']).decode('utf-8')
-        elif system_info['os'] == 'Darwin':
-            installed_packages = subprocess.check_output(['brew', 'list']).decode('utf-8')
-        else:
-            installed_packages = "Unsupported OS for package listing"
-    except Exception as e:
-        installed_packages = f"Error getting installed packages: {str(e)}"
-    return installed_packages
+    def default_func():
+        try:
+            if system_info['os'] == 'Linux':
+                return subprocess.check_output(['dpkg', '--get-selections']).decode('utf-8')
+            elif system_info['os'] == 'Darwin':
+                return subprocess.check_output(['brew', 'list']).decode('utf-8')
+            else:
+                return "Unsupported OS for package listing"
+        except subprocess.CalledProcessError as e:
+            return f"Error getting installed packages: {str(e)}"
+
+    return load_or_save_to_cache(INSTALLED_PACKAGES_CACHE_FILE, default_func)
 
 
 installed_packages = asyncio.run(get_installed_packages())
