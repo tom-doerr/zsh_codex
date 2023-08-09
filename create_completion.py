@@ -11,6 +11,7 @@ import json
 import time
 
 
+
 # Get config dir from environment or default to ~/.config
 CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
 API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
@@ -124,10 +125,10 @@ async def get_installed_packages():
     def default_func():
         try:
             if system_info['os'] == 'Linux':
-                command = "dpkg --get-selections | head -n 10"
+                command = "dpkg --get-selections | head -n 5"
                 return subprocess.check_output(command, shell=True).decode('utf-8')
             elif system_info['os'] == 'Darwin':
-                command = "brew list -1t 2> /dev/null | head -n 10"
+                command = "brew list -1t 2> /dev/null | head -n 5"
                 return subprocess.check_output(command, shell=True).decode('utf-8')
             else:
                 return "Unsupported OS for package listing"
