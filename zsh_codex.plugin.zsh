@@ -5,10 +5,14 @@
 
 create_completion() {
 
-    local pipe_path="/tmp/tmp_pipe"
-    [ ! -p "$pipe_path" ] && mkfifo "$pipe_path"
+  local pipe_path="/tmp/tmp_pipe"
 
-     text=${BUFFER}
+  if [[ -p $pipe_path ]]; then
+      rm -f $pipe_path
+  fi
+  mkfifo "$pipe_path"
+
+  text=${BUFFER}
 
 
   # Run the Python script in the background
@@ -33,8 +37,7 @@ create_completion() {
     fi
   done
 
-  # Wait for the Python script to finish
-  wait $python_pid
+  # Remove Pipe
   rm -f "$pipe_path"
 
   # Redraw the command line once more to clear any remaining text
