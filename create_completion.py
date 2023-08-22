@@ -16,7 +16,7 @@ temp = conf["temp"]
 n = conf["n"]
 main = conf["path_to_starcoder.cpp"] +"main"
 model = conf["path_to_starcoder.cpp"] + conf["model_name"]
-system = "<|system|> You are a linux shell expert, please help me complete the following command in the most efficient simplest way that fullfiles the requested command as close as possible. Start your reponse by giving a least detailed(minimal) step by step explanation for all parts of the shell command. End you response with the completed command. <|end|>:"
+system = "<|system|> You are a linux shell expert, please help me complete the following command in the most efficient and simplest way that adheres to the requested functionality. Start your reponse by giving a least detailed(minimal) step by step explanation for all parts of the shell command. End you response with the completed command. <|end|>:"
 params = f"--top_k {top_k} --top_p {top_p} --temp {temp} -n {n}"
 
 
