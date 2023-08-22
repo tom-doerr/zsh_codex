@@ -7,8 +7,8 @@ create_completion() {
 
   local pipe_path="/tmp/tmp_pipe"
 
-  if [[ -p $pipe_path ]]; then
-      rm -f $pipe_path
+  if [ -p "$pipe_path" ] ; then
+      rm -rf "$pipe_path"
   fi
   mkfifo "$pipe_path"
 
@@ -38,7 +38,7 @@ create_completion() {
   done
 
   # Remove Pipe
-  rm -f "$pipe_path"
+  rm -rf "$pipe_path"
 
   # Redraw the command line once more to clear any remaining text
   zle -R

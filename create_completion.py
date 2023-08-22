@@ -16,12 +16,12 @@ temp = conf["temp"]
 n = conf["n"]
 main = conf["path_to_starcoder.cpp"] +"main"
 model = conf["path_to_starcoder.cpp"] + conf["model_name"]
-system = "<|system|> You are a linux shell expert, please help me complete the following command in the most efficient and simplest way that adheres to the requested functionality. Start your reponse by giving a least detailed(minimal) step by step explanation for all parts of the shell command. End you response with the completed command. <|end|>:"
+system = "<|system|> You are the leading linux shell expert for writing the shortest commands possible, please help me complete the following command. Start your reponse by giving a least detailed(minimal) step by step explanation for all parts of the shell command. At the end summarize the above steps by writing out the full command in one line. Write nothing else after and most importantly be extremly brief.<|end|>"
 params = f"--top_k {top_k} --top_p {top_p} --temp {temp} -n {n}"
 
 
-text = str(sys.argv[1])
-query= main + ' -m ' + model + ' -p \"' + system + " " + text + " \" " + params
+user = '<|user|>' + str(sys.argv[1]) + "<|end|> "
+query= main + ' -m ' + model + ' -p \"' + system + user + " \" " + params
 
 pipe_path = "/tmp/tmp_pipe"
 log = home_directory+'/.oh-my-zsh/custom/plugins/zsh_codex/info.log'
@@ -29,7 +29,10 @@ with open(pipe_path, 'w') as pipe, open(log, 'w') as log:
     log.write(f"------------Query------------ \n {query} \n ------------Outputs------------\n")
     process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
     with process.stdout:
+        counter = 0
         for line in iter(process.stdout.readline, ''):
             log.write(line)
             pipe.write(line)
-            pipe.flush()
+            counter+=1
+            if counter%10 == 0:
+                pipe.flush()
