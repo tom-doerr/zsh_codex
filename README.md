@@ -48,15 +48,12 @@ To use this plugin you need to get access to OpenAI's [Codex API](https://openai
 
 ## How do I install it?
 ### Manual Installation
-1. Install the OpenAI package.
-```
-pip3 install openai
-```
+1. Install https://github.com/bigcode-project/starcoder.cpp and quantize the ```HuggingFaceH4/starchat-beta``` model.
 
 2. Download the ZSH plugin.
 
 ```
-git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex 
+https://github.com/KukumavMozolo/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex 
 ```
 
 3. Add the following to your `.zshrc` file.
@@ -74,19 +71,11 @@ Without oh-my-zsh:
     bindkey '^X' create_completion
 ```
 
-4. Create a file called `openaiapirc` in `~/.config` with your ORGANIZATION_ID and SECRET_KEY.
+4. Edit the config.json in ```~/.oh-my-zsh/custom/plugins/zsh_codex/``` so that ```path_to_starcoder_cpp_main``` points
+to your starcoder.cpp directory
 
-```
-[openai]
-organization_id = ...
-secret_key = ...
-```
+5. Run `zsh`, start typing and complete it using `^X`([Ctrl] + X)!
 
-5. Run `zsh`, start typing and complete it using `^X`!
-
-### Fig Installation
-
-<a href="https://fig.io/plugins/other/zsh_codex_tom-doerr" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
 
 ## Troubleshooting 
 

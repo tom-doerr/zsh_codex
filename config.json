@@ -1,5 +1,5 @@
 {
-  "path_to_starcoder_cpp_main": "path/to/your/starcoder.cpp/directory",
+  "path_to_starcoder.cpp": "path/to/your/starcoder.cpp/directory",
   "model_name": "models/HuggingFaceH4/starchat-beta-ggml-q4_1.bin",
   "top_k": "10",
   "top_p": "98",
