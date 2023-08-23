@@ -17,11 +17,11 @@ n = conf["n"]
 main = conf["path_to_starcoder.cpp"] +"main"
 model = conf["path_to_starcoder.cpp"] + conf["model_name"]
 # system = "<|system|> You are the leading linux shell expert for writing the shortest commands possible, please help me complete the following command. Start your reponse by giving a least detailed(minimal) step by step explanation for all parts of the shell command. At the end summarize the above steps by writing out the full command in one line sourned by ''' on both sides. Write nothing else after and most importantly be extremly brief.<|end|>"
-system = "<|system|> You are the leading linux shell expert for writing the shortest commands possible, please help me complete the following command. Start your reponse by giving a step by step explanation for all parts of the shell command. At the end summarize the above steps by writing out the full command in one line sourounded by ''' on both sides.<|end|>"
+system = "<|system|> You are the leading linux shell expert for writing the shortest commands possible, please help me complete the following command. Start your reponse by giving a step by step explanation for all parts of the shell command. At the end summarize the above steps by writing out the full command in one line sourounded by ''' on both sides but dont include the .<|end|>"
 params = f"--top_k {top_k} --top_p {top_p} --temp {temp} -n {n}"
 
 
-user = '<|user|>' + str(sys.argv[1]) + "<|end|> "
+user = '<|user|>' + str(sys.argv[1])
 query= main + ' -m ' + model + ' -p \"' + system + user + " \" " + params
 
 pipe_path = "/tmp/tmp_pipe"
