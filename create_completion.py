@@ -25,7 +25,7 @@ query= main + ' -m ' + model + ' -p \"' + system + user + " \" " + params
 
 pipe_path = "/tmp/tmp_pipe"
 log = home_directory+'/.oh-my-zsh/custom/plugins/zsh_codex/info.log'
-with os.open(pipe_path, os.O_RDWR) as pipe, open(log, 'w') as log:
+with open(pipe_path, 'w+') as pipe, open(log, 'w') as log:
     log.write(f"------------Query------------ \n {query} \n ------------Outputs------------\n")
     process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
     with process.stdout:
