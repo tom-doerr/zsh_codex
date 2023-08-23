@@ -25,7 +25,7 @@ create_completion() {
     # Read a line of output from the named pipe
     if read output ;then
       # Update the BUFFER variable with the current output
-      BUFFER=$output
+      BUFFER+=$output
       # Redraw the command line to display the updated BUFFER
       zle -R
     fi
