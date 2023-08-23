@@ -34,6 +34,4 @@ with open(pipe_path, 'w') as pipe, open(log, 'w') as log:
         for line in iter(process.stdout.readline, ''):
             log.write(line)
             pipe.write(line)
-            counter+=1
-            if counter%10 == 0:
-                pipe.flush()
+            pipe.flush()
