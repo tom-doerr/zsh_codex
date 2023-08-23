@@ -23,8 +23,7 @@ create_completion() {
   # Function to read lines from the named pipe and update the BUFFER
   while true; do
     # Read a line of output from the named pipe
-    local output
-    if read output < "$pipe_path"; then
+    if read output ;then
       # Update the BUFFER variable with the current output
       BUFFER=$output
       # Redraw the command line to display the updated BUFFER
@@ -35,7 +34,7 @@ create_completion() {
     if ! kill -0 $python_pid 2>/dev/null; then
       break
     fi
-  done
+  done <"$pipe_path";
 
   # Remove Pipe
   rm -rf "$pipe_path"
