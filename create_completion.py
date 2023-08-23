@@ -21,7 +21,7 @@ system = "<|system|> You are the leading linux shell expert for writing the shor
 params = f"--top_k {top_k} --top_p {top_p} --temp {temp} -n {n}"
 
 
-user = '<|user|>' + str(sys.argv[1])
+user = '<|user|>' + str(sys.argv[1]) + "<|end|><|assistant|>"
 query= main + ' -m ' + model + ' -p \"' + system + user + " \" " + params
 
 pipe_path = "/tmp/tmp_pipe"
