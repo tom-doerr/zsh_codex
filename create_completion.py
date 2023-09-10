@@ -77,4 +77,5 @@ response = openai.ChatCompletion.create(model=model, messages=[
 ])
 completed_command = response['choices'][0]['message']['content']
 
-sys.stdout.write(f"\n{completed_command}")
+sys.stdout.write(f"\n{completed_command.replace(prompt_prefix, '', 1)}")
+
