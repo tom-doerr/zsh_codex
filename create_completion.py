@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import openai
+from openai import OpenAI
 import sys
 import os
 import configparser
@@ -8,7 +9,7 @@ import configparser
 # Get config dir from environment or default to ~/.config
 CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
 API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
-
+client = OpenAI(api_key=CONFIG_DIR['openai']['secret_key'].strip('"').strip("'"))
 # Read the organization_id and secret_key from the ini file ~/.config/openaiapirc
 # The format is:
 # [openai]
@@ -46,8 +47,8 @@ def initialize_openai_api():
     config = configparser.ConfigParser()
     config.read(API_KEYS_LOCATION)
 
-    openai.organization_id = config['openai']['organization_id'].strip('"').strip("'")
-    openai.api_key = config['openai']['secret_key'].strip('"').strip("'")
+    # TODO: The 'openai.organization_id' option isn't read in the client API. You will need to pass it when you instantiate the client, e.g. 'OpenAI(organization_id=config['openai']['organization_id'].strip('"').strip("'"))'
+    # openai.organization_id = config['openai']['organization_id'].strip('"').strip("'")
 
     if 'model' in config['openai']:
         model = config['openai']['model'].strip('"').strip("'")
@@ -65,7 +66,7 @@ buffer = sys.stdin.read()
 prompt_prefix = '#!/bin/zsh\n\n' + buffer[:cursor_position_char]
 prompt_suffix = buffer[cursor_position_char:]
 full_command = prompt_prefix + prompt_suffix
-response = openai.ChatCompletion.create(model=model, messages=[
+response = client.chat.completions.create(model=model, messages=[
     {
         "role":'system',
         "content": "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation",
@@ -78,4 +79,3 @@ response = openai.ChatCompletion.create(model=model, messages=[
 completed_command = response['choices'][0]['message']['content']
 
 sys.stdout.write(f"\n{completed_command.replace(prompt_prefix, '', 1)}")
-
