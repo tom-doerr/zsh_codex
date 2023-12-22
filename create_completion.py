@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import openai
 from openai import OpenAI
 import sys
 import os
