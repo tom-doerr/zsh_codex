@@ -56,7 +56,7 @@ pip3 install openai
 2. Download the ZSH plugin.
 
 ```
-git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex 
+git clone https://github.com/luodian/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex 
 ```
 
 3. Add the following to your `.zshrc` file.
