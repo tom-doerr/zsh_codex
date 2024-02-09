@@ -84,6 +84,12 @@ secret_key = ...
 
 5. Run `zsh`, start typing and complete it using `^X`!
 
+6. If you use virtual environments you can set `ZSH_CODEX_PYTHON` to python executable where `openai` is installed.
+e.g. for `miniconda` you can use:
+```
+export ZSH_CODEX_PYTHON="$HOME/miniconda3/bin/python"
+```
+
 ### Fig Installation
 
 <a href="https://fig.io/plugins/other/zsh_codex_tom-doerr" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
