@@ -69,5 +69,14 @@ response = client.chat.completions.create(model=model_name, messages=[
     }
 ])
 completed_command = response.choices[0].message.content
+if prompt_prefix in completed_command:
+    completion = completed_command.replace(prompt_prefix, '', 1)
+else:
+    # Handle the case when output misses #!/bin/zsh
+    completion = completed_command.replace(buffer[:cursor_position_char], "", 1)
+completion = completion.replace(prompt_suffix, "", 1)
 
-sys.stdout.write(f"\n{completed_command.replace(prompt_prefix, '', 1)}")
+if buffer.strip().startswith("#"):
+    completion = "\n" + completion
+
+sys.stdout.write(completion)
