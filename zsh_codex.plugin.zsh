@@ -1,14 +1,15 @@
 #!/bin/zsh
 
-# This ZSH plugin reads the text from the current buffer 
+# This ZSH plugin reads the text from the current buffer
 # and uses a Python script to complete the text.
- 
+
 
 create_completion() {
     # Get the text typed until now.
     text=${BUFFER}
     #echo $cursor_line $cursor_col
-    completion=$(echo -n "$text" | $ZSH_CUSTOM/plugins/zsh_codex/create_completion.py $CURSOR)
+    ZSH_CODEX_PYTHON="${ZSH_CODEX_PYTHON:-python3}"
+    completion=$(echo -n "$text" | $ZSH_CODEX_PYTHON $ZSH_CUSTOM/plugins/zsh_codex/create_completion.py $CURSOR)
     text_before_cursor=${text:0:$CURSOR}
     text_after_cursor=${text:$CURSOR}
     # Add completion to the current buffer.
@@ -21,6 +22,3 @@ create_completion() {
 
 # Bind the create_completion function to a key.
 zle -N create_completion
-
-
-
