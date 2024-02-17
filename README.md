@@ -74,13 +74,14 @@ Without oh-my-zsh:
     bindkey '^X' create_completion
 ```
 
-4. Create a file called `openaiapirc` in `~/.config` with your ORGANIZATION_ID and SECRET_KEY.
+4. Create a file called `openaiapirc` in `~/.config` with your SECRET_KEY.
 
 ```
 [openai]
-organization_id = ...
 secret_key = ...
 ```
+
+You can also optionally specify: organization, model and temperature.
 
 5. Run `zsh`, start typing and complete it using `^X`!
 
