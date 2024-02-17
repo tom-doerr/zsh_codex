@@ -51,15 +51,16 @@ cursor_position_char = int(sys.argv[1])
 
 # Read the input prompt from stdin.
 buffer = sys.stdin.read()
-prompt_prefix = '#!/bin/zsh\n\n' + buffer[:cursor_position_char]
-prompt_suffix = buffer[cursor_position_char:]
-full_command = prompt_prefix + prompt_suffix
+zsh_prefix = '#!/bin/zsh\n\n'
+buffer_prefix = buffer[:cursor_position_char]
+buffer_suffix = buffer[cursor_position_char:]
+full_command = zsh_prefix + buffer_prefix + buffer_suffix
 response = client.chat.completions.create(
     model=config["model"],
     messages=[
         {
             "role":'system',
-            "content": "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation",
+            "content": "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation. Do not put completed command in a code block.",
         },
         {
             "role":'user',
@@ -68,15 +69,22 @@ response = client.chat.completions.create(
     ],
     temperature=float(config["temperature"])
 )
-completed_command = response.choices[0].message.content
-if prompt_prefix in completed_command:
-    completion = completed_command.replace(prompt_prefix, '', 1)
-else:
-    # Handle the case when output misses #!/bin/zsh
-    completion = completed_command.replace(buffer[:cursor_position_char], "", 1)
-completion = completion.replace(prompt_suffix, "", 1)
+completion: str = response.choices[0].message.content
+if completion.startswith(zsh_prefix):
+    completion = completion[len(zsh_prefix):]
 
-if buffer.strip().startswith("#"):
+line_prefix = buffer_prefix.rsplit("\n", 1)[-1]
+# Handle all the different ways the command can be returned
+for prefix in [buffer_prefix, line_prefix]:
+    if completion.startswith(prefix):
+        completion = completion[len(prefix):]
+        break
+
+if buffer_suffix and completion.endswith(buffer_suffix):
+    completion = completion[:-len(buffer_suffix)]
+
+completion = completion.strip("\n")
+if line_prefix.strip().startswith("#"):
     completion = "\n" + completion
 
 sys.stdout.write(completion)
