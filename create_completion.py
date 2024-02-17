@@ -62,7 +62,7 @@ full_command = zsh_prefix + buffer_prefix + buffer_suffix
 response = client.chat.completions.create(model=model_name, messages=[
     {
         "role":'system',
-        "content": "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation",
+        "content": "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation. Do not put completion in a code block.",
     },
     {
         "role":'user',
