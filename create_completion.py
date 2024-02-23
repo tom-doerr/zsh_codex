@@ -27,6 +27,7 @@ def create_template_ini_file():
             f.write('organization_id=\n')
             f.write('secret_key=\n')
             f.write('model=gpt-3.5-turbo-0613\n')
+            f.write('base_url=https://api.openai.com/v1\n')
 
         print('OpenAI API config file created at {}'.format(API_KEYS_LOCATION))
         print('Please edit it and add your organization ID and secret key')
@@ -47,7 +48,8 @@ def initialize_openai_api():
 
     api_key = config['openai']['secret_key'].strip('"').strip("'")
     model_name = config['openai'].get('model', 'gpt-3.5-turbo').strip('"').strip("'")
-    client = OpenAI(api_key=api_key)
+    base_url = config['openai'].get('base_url', 'https://api.openai.com/v1').strip('"').strip("'")
+    client = OpenAI(api_key=api_key, base_url=base_url)
     return client, model_name
 
 client, model_name = initialize_openai_api()
