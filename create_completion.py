@@ -24,6 +24,8 @@ def create_template_ini_file():
         with open(API_KEYS_LOCATION, 'w') as f:
             f.write('[openai]\n')
             f.write('secret_key=\n')
+            f.write('model=gpt-3.5-turbo-0613\n')
+            f.write('base_url=https://api.openai.com/v1\n')
 
         print('OpenAI API config file created at {}'.format(API_KEYS_LOCATION))
         print('Please edit it and add your secret key')
@@ -41,10 +43,11 @@ def initialize_openai_api():
     config = configparser.ConfigParser()
     config.read(API_KEYS_LOCATION)
 
-    config = {k: v.strip("'\"") for k, v in config["openai"].items()}
-    assert "secret_key" in config, "Can't find secret_key in config"
-    client = OpenAI(api_key=config["secret_key"], organization=config.get("organization"))
-    return client, config
+    api_key = config['openai']['secret_key'].strip('"').strip("'")
+    model_name = config['openai'].get('model', 'gpt-3.5-turbo').strip('"').strip("'")
+    base_url = config['openai'].get('base_url', 'https://api.openai.com/v1').strip('"').strip("'")
+    client = OpenAI(api_key=api_key, base_url=base_url)
+    return client, model_name
 
 client, config = initialize_openai_api()
 cursor_position_char = int(sys.argv[1])
