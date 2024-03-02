@@ -13,6 +13,7 @@ API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
 # [openai]
 # secret_key=<your secret key>
 # organization=<your organization ID>
+# base_url=<base_url to use>
 # model=<model to use>
 # temperature=<temperature to use for generations>
 
@@ -24,13 +25,11 @@ def create_template_ini_file():
         with open(API_KEYS_LOCATION, 'w') as f:
             f.write('[openai]\n')
             f.write('secret_key=\n')
-            f.write('model=gpt-3.5-turbo-0613\n')
-            f.write('base_url=https://api.openai.com/v1\n')
 
         print('OpenAI API config file created at {}'.format(API_KEYS_LOCATION))
         print('Please edit it and add your secret key')
         print('If you do not yet have a secret key, you can get it at: https://platform.openai.com/api-keys')
-        print('You can also optionally add model, organization and temperature')
+        print('You can also optionally add organization, base_url, model and temperature')
         sys.exit(1)
 
 
@@ -43,11 +42,15 @@ def initialize_openai_api():
     config = configparser.ConfigParser()
     config.read(API_KEYS_LOCATION)
 
-    api_key = config['openai']['secret_key'].strip('"').strip("'")
-    model_name = config['openai'].get('model', 'gpt-3.5-turbo').strip('"').strip("'")
-    base_url = config['openai'].get('base_url', 'https://api.openai.com/v1').strip('"').strip("'")
-    client = OpenAI(api_key=api_key, base_url=base_url)
-    return client, model_name
+    oai_config = {k: v.strip("\"'") for k, v in config["openai"].items()}
+    client = OpenAI(
+        api_key=oai_config["secret_key"],
+        base_url=oai_config.get("base_url", "https://api.openai.com/v1"),
+        organization=oai_config.get("organization")
+    )
+
+    oai_config.setdefault("model", "gpt-3.5-turbo-0613")
+    return client, oai_config
 
 client, config = initialize_openai_api()
 cursor_position_char = int(sys.argv[1])
@@ -70,7 +73,7 @@ response = client.chat.completions.create(
             "content": full_command,
         }
     ],
-    temperature=float(config["temperature"])
+    temperature=float(config.get("temperature", 1.0))
 )
 completion: str = response.choices[0].message.content
 if completion.startswith(zsh_prefix):

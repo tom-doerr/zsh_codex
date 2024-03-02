@@ -81,7 +81,7 @@ Without oh-my-zsh:
 secret_key = ...
 ```
 
-You can also optionally specify: organization, model and temperature.
+You can also optionally specify: organization, base_url, model and temperature.
 
 5. Run `zsh`, start typing and complete it using `^X`!
 
