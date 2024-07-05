@@ -87,19 +87,8 @@ def get_completion(api_type, client, config, full_command):
     else:  # gemini
         model = client.GenerativeModel(config["model"])
         chat = model.start_chat(history=[])
-        response = chat.send_message([
-            {
-                "role": "user",
-                "parts": [
-                    {
-                        "text": "You are a zsh shell expert, please help me complete the following command. Only output the completed command, no need for any other explanation. Do not put the completed command in a code block."
-                    },
-                    {
-                        "text": full_command
-                    }
-                ]
-            }
-        ])
+        prompt = "You are a zsh shell expert, please help me complete the following command. Only output the completed command, no need for any other explanation. Do not put the completed command in a code block.\n\n" + full_command
+        response = chat.send_message(prompt)
         return response.text
 
 def main():
