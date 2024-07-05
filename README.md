@@ -42,32 +42,43 @@
 
 ## What is it?
 
-This is a ZSH plugin that enables you to use OpenAI's powerful Codex AI in the command line. OpenAI Codex is the AI that also powers GitHub Copilot.
-To use this plugin you need to get access to OpenAI's [Codex API](https://openai.com/blog/openai-codex/).
+This is a ZSH plugin that enables you to use AI powered code completion in the command line. It now supports both OpenAI's Codex and Google's Generative AI (Gemini). OpenAI Codex is the AI that also powers GitHub Copilot, while Gemini is Google's advanced language model.
 
 
 ## How do I install it?
+
 ### Manual Installation
-1. Install the OpenAI package.
-```
+
+1. Install the OpenAI package or the Google package.
+
+```bash
 pip3 install openai
+```
+
+or
+
+```bash
+pip3 install google-generativeai
 ```
 
 2. Download the ZSH plugin.
 
-```
+```bash
 git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex 
 ```
 
 3. Add the following to your `.zshrc` file.
 
 Using oh-my-zsh:
-```
+
+```bash
     plugins=(zsh_codex)
     bindkey '^X' create_completion
 ```
+
 Without oh-my-zsh:
-```
+
+```bash
     # in your/custom/path you need to have a "plugins" folder and in there you clone the repository as zsh_codex
     export ZSH_CUSTOM="your/custom/path"
     source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
@@ -76,18 +87,35 @@ Without oh-my-zsh:
 
 4. Create a file called `openaiapirc` in `~/.config` with your SECRET_KEY.
 
-```
+```bash
 [openai]
 secret_key = ...
 ```
 
+or
+Create a file called `geminiapirc` in `~/.config` with your SECRET_KEY.
+
+```bash
+[gemini]
+api_key = ...
+```
+
 You can also optionally specify: organization, base_url, model and temperature.
 
-5. Run `zsh`, start typing and complete it using `^X`!
+5. Set the LLM which you are going to use (you can choose between `openai` and `gemini`).
 
-6. If you use virtual environments you can set `ZSH_CODEX_PYTHON` to python executable where `openai` is installed.
-e.g. for `miniconda` you can use:
+```bash
+nano ~/.oh-my-zsh/custom/plugins/zsh_codex/zsh_codex.plugin.zsh
 ```
+
+Set the `api` variable to `openai` or `gemini`.
+
+6. Run `zsh`, start typing and complete it using `^X`!
+
+7. If you use virtual environments you can set `ZSH_CODEX_PYTHON` to python executable where `openai` or `google-generativeai` is installed.
+e.g. for `miniconda` you can use:
+
+```bash
 export ZSH_CODEX_PYTHON="$HOME/miniconda3/bin/python"
 ```
 
