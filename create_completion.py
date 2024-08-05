@@ -21,6 +21,10 @@ CONFIG_DIR = os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
 OPENAI_API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'openaiapirc')
 GEMINI_API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'geminiapirc')
 
+# Allow users to pick the model they wish to run:
+OPENAI_DEFAULT_MODEL = os.getenv('OPENAI_DEFAULT_MODEL', 'gpt-4o-mini')
+GEMINI_DEFAULT_MODEL = os.getenv('GEMINI_DEFAULT_MODEL', 'gemini-1.5-pro-latest')
+
 def create_template_ini_file(api_type):
     """
     If the ini file does not exist create it and add the api_key placeholder
@@ -58,13 +62,13 @@ def initialize_api(api_type):
             base_url=api_config.get("base_url", "https://api.openai.com/v1"),
             organization=api_config.get("organization")
         )
-        api_config.setdefault("model", "gpt-3.5-turbo-0613")
+        api_config.setdefault("model", OPENAI_DEFAULT_MODEL)
         return client, api_config
     else:  # gemini
         config.read(GEMINI_API_KEYS_LOCATION)
         api_config = {k: v.strip("\"'") for k, v in config["gemini"].items()}
         genai.configure(api_key=api_config["api_key"])
-        api_config.setdefault("model", "gemini-1.5-pro-latest")
+        api_config.setdefault("model", GEMINI_DEFAULT_MODEL)
         return genai, api_config
 
 def get_completion(api_type, client, config, full_command):
