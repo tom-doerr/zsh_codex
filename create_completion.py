@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.10
 
 import sys
 import os
@@ -25,6 +25,15 @@ GEMINI_API_KEYS_LOCATION = os.path.join(CONFIG_DIR, 'geminiapirc')
 OPENAI_DEFAULT_MODEL = os.getenv('OPENAI_DEFAULT_MODEL', 'gpt-4o-mini')
 GEMINI_DEFAULT_MODEL = os.getenv('GEMINI_DEFAULT_MODEL', 'gemini-1.5-pro-latest')
 
+try:
+    import ollama
+except ImportError:
+    print('Ollama library is not installed. Please install it using "pip install ollama"')
+    ollama = None
+
+OLLAMA_DEFAULT_MODEL = os.getenv('OLLAMA_DEFAULT_MODEL', 'llama3.1')
+
+
 def create_template_ini_file(api_type):
     """
     If the ini file does not exist create it and add the api_key placeholder
@@ -33,10 +42,14 @@ def create_template_ini_file(api_type):
         file_path = OPENAI_API_KEYS_LOCATION
         content = '[openai]\nsecret_key=\n'
         url = 'https://platform.openai.com/api-keys'
-    else:  # gemini
+    elif api_type == 'gemini':
         file_path = GEMINI_API_KEYS_LOCATION
         content = '[gemini]\napi_key=\n'
         url = 'Google AI Studio'
+    elif api_type == 'ollama':
+        file_path = os.path.join(CONFIG_DIR, 'ollamarc')
+        content = '[ollama]\nmodel=llama3.1\n'
+        url = 'https://ollama.ai/'
 
     if not os.path.isfile(file_path):
         with open(file_path, 'w') as f:
@@ -46,6 +59,7 @@ def create_template_ini_file(api_type):
         print('Please edit it and add your API key')
         print(f'If you do not yet have an API key, you can get it from: {url}')
         sys.exit(1)
+    
 
 def initialize_api(api_type):
     """
@@ -64,12 +78,17 @@ def initialize_api(api_type):
         )
         api_config.setdefault("model", OPENAI_DEFAULT_MODEL)
         return client, api_config
-    else:  # gemini
+    elif api_type == 'gemini':
         config.read(GEMINI_API_KEYS_LOCATION)
         api_config = {k: v.strip("\"'") for k, v in config["gemini"].items()}
         genai.configure(api_key=api_config["api_key"])
         api_config.setdefault("model", GEMINI_DEFAULT_MODEL)
         return genai, api_config
+    elif api_type == 'ollama':
+        config.read(os.path.join(CONFIG_DIR, 'ollamarc'))
+        api_config = {k: v.strip("\"'") for k, v in config["ollama"].items()}
+        api_config.setdefault("model", OLLAMA_DEFAULT_MODEL)
+        return ollama, api_config
 
 def get_completion(api_type, client, config, full_command):
     if api_type == 'openai':
@@ -88,16 +107,30 @@ def get_completion(api_type, client, config, full_command):
             temperature=float(config.get("temperature", 1.0))
         )
         return response.choices[0].message.content
-    else:  # gemini
+    elif api_type == 'gemini':
         model = client.GenerativeModel(config["model"])
         chat = model.start_chat(history=[])
         prompt = "You are a zsh shell expert, please help me complete the following command. Only output the completed command, no need for any other explanation. Do not put the completed command in a code block.\n\n" + full_command
         response = chat.send_message(prompt)
         return response.text
-
+    elif api_type == 'ollama':
+        response = client.chat(
+            model=config["model"],
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a zsh shell expert, please help me complete the following command. Only output the completed command, no need for any other explanation. Do not put the completed command in a code block."
+                },
+                {
+                    "role": "user",
+                    "content": full_command
+                }
+            ]
+        )
+        return response['message']['content']
 def main():
     parser = argparse.ArgumentParser(description="Generate command completions using AI.")
-    parser.add_argument('--api', choices=['openai', 'gemini'], default='openai', help="Choose the API to use (default: openai)")
+    parser.add_argument('--api', choices=['openai', 'gemini', 'ollama'], default='ollama', help="Choose the API to use (default: ollama)")
     parser.add_argument('cursor_position', type=int, help="Cursor position in the input buffer")
     args = parser.parse_args()
 
@@ -106,6 +139,9 @@ def main():
         sys.exit(1)
     elif args.api == 'gemini' and genai is None:
         print("Google Generative AI library is not installed. Please install it using 'pip install google-generativeai'")
+        sys.exit(1)
+    elif args.api == 'ollama' and ollama is None:
+        print("Ollama library is not installed. Please install it using 'pip install ollama'")
         sys.exit(1)
 
     client, config = initialize_api(args.api)

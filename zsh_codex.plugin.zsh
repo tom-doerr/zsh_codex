@@ -2,7 +2,7 @@
 
 # This ZSH plugin reads the text from the current buffer
 # and uses a Python script to complete the text.
-api="openai"
+api="ollama"
 
 create_completion() {
     # Get the text typed until now.
