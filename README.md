@@ -61,6 +61,12 @@ or
 pip3 install google-generativeai
 ```
 
+or
+
+```bash
+pip3 install ollama
+```
+
 2. Download the ZSH plugin.
 
 ```bash
@@ -101,6 +107,14 @@ api_key = ...
 ```
 
 You can also optionally specify: organization, base_url, model and temperature.
+
+or
+Create a file called `ollamarc` in `~/.config` with your SECRET_KEY.
+
+```bash
+[ollama]
+model = ...
+```
 
 5. Set the LLM which you are going to use (you can choose between `openai` and `gemini`).
 
