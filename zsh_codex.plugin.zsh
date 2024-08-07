@@ -2,7 +2,7 @@
 
 # This ZSH plugin reads the text from the current buffer
 # and uses a Python script to complete the text.
-api="openai"
+api="${ZSH_CODEX_AI_SERVICE:-groq}"  # Default to OpenAI if not set
 
 create_completion() {
     # Get the text typed until now.
