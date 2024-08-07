@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.10
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -130,7 +130,7 @@ def get_completion(api_type, client, config, full_command):
         return response['message']['content']
 def main():
     parser = argparse.ArgumentParser(description="Generate command completions using AI.")
-    parser.add_argument('--api', choices=['openai', 'gemini', 'ollama'], default='ollama', help="Choose the API to use (default: ollama)")
+    parser.add_argument('--api', choices=['openai', 'gemini', 'ollama'], default='openai', help="Choose the API to use (default: openai)")
     parser.add_argument('cursor_position', type=int, help="Cursor position in the input buffer")
     args = parser.parse_args()
 
