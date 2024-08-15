@@ -31,7 +31,7 @@ def create_template_ini_file(api_type):
     """
     if api_type == 'openai':
         file_path = OPENAI_API_KEYS_LOCATION
-        content = '[openai]\nsecret_key=\n'
+        content = '[openai]\nsecret_key=\napi_base=https://api.openai.com/v1\nmodel=gpt-4-turbo-preview\n'
         url = 'https://platform.openai.com/api-keys'
     else:  # gemini
         file_path = GEMINI_API_KEYS_LOCATION
@@ -59,10 +59,10 @@ def initialize_api(api_type):
         api_config = {k: v.strip("\"'") for k, v in config["openai"].items()}
         client = OpenAI(
             api_key=api_config["secret_key"],
-            base_url=api_config.get("base_url", "https://api.openai.com/v1"),
+            base_url=api_config.get("api_base", "https://api.openai.com/v1"),
             organization=api_config.get("organization")
         )
-        api_config.setdefault("model", OPENAI_DEFAULT_MODEL)
+        api_config.setdefault("model", api_config.get("model", OPENAI_DEFAULT_MODEL))
         return client, api_config
     else:  # gemini
         config.read(GEMINI_API_KEYS_LOCATION)
