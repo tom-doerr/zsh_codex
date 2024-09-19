@@ -21,6 +21,7 @@ class BaseClient(ABC):
 class OpenAIClient(BaseClient):
     """
     config keys:
+        - api_type="openai"
         - api_key (required)
         - base_url (optional): defaults to "https://api.openai.com/v1".
         - organization (optional): defaults to None
@@ -63,6 +64,7 @@ class OpenAIClient(BaseClient):
 class GoogleGenAIClient(BaseClient):
     """
     config keys:
+        - api_type="gemeni"
         - api_key (required)
         - model (optional): defaults to "gemini-1.5-pro-latest"
     """
