@@ -39,11 +39,9 @@
     </p>
 </p>
 
-
 ## What is it?
 
 This is a ZSH plugin that enables you to use AI powered code completion in the command line. It now supports both OpenAI's Codex and Google's Generative AI (Gemini). OpenAI Codex is the AI that also powers GitHub Copilot, while Gemini is Google's advanced language model.
-
 
 ## How do I install it?
 
@@ -111,9 +109,8 @@ nano ~/.oh-my-zsh/custom/plugins/zsh_codex/zsh_codex.plugin.zsh
 Set the `api` variable to `openai` or `gemini`.
 
 6. Run `zsh`, start typing and complete it using `^X`!
-
 7. If you use virtual environments you can set `ZSH_CODEX_PYTHON` to python executable where `openai` or `google-generativeai` is installed.
-e.g. for `miniconda` you can use:
+   e.g. for `miniconda` you can use:
 
 ```bash
 export ZSH_CODEX_PYTHON="$HOME/miniconda3/bin/python"
@@ -123,7 +120,7 @@ export ZSH_CODEX_PYTHON="$HOME/miniconda3/bin/python"
 
 <a href="https://fig.io/plugins/other/zsh_codex_tom-doerr" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
 
-## Troubleshooting 
+## Troubleshooting
 
 ### Unhandled ZLE widget 'create_completion'
 
@@ -132,33 +129,41 @@ zsh-syntax-highlighting: unhandled ZLE widget 'create_completion'
 zsh-syntax-highlighting: (This is sometimes caused by doing `bindkey <keys> create_completion` without creating the 'create_completion' widget with `zle -N` or `zle -C`.)
 ```
 
-Add the line 
+Add the line
+
 ```
 zle -N create_completion
 ```
+
 before you call `bindkey` but after loading the plugin (`plugins=(zsh_codex)`).
 
 ### Already exists and is not an empty directory
+
 ```
 fatal: destination path '~.oh-my-zsh/custom/plugins'
 ```
+
 Try to download the ZSH plugin again.
+
 ```
 git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins/zsh_codex
 ```
+
 ---
+
 <p align="center">
     <a href="https://www.buymeacoffee.com/TomDoerr" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 </p>
 
 ## More usage examples
+
 <p align="center">
     <img src='https://github.com/tom-doerr/bins/raw/main/zsh_codex/update_insert/all.gif'>
     <p align="center">
     </p>
 </p>
 
--------------------------------------------------------------------
+---
 
 [Fish Version](https://github.com/tom-doerr/codex.fish)
 
