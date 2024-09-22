@@ -83,30 +83,27 @@ Without oh-my-zsh:
     bindkey '^X' create_completion
 ```
 
-4. Create a file called `openaiapirc` in `~/.config` with your SECRET_KEY.
+4. Create a file called `zsh_codex.ini` in `~/.config`.
+   Example:
 
-```bash
+```ini
+[service]
+service = ollama_local ; the active service
+
+; api_type: Mandatory for every service. Choose between "openai" and "gemeni"
+
+[ollama_local] ; this can be any name
+api_type = openai ; check services/services.py for available parameters for this api_type
+api_key = dummy_key
+model = llama3.1
+base_url = http://localhost:11434/v1
+
 [openai]
-secret_key = ...
+api_type = openai
+api_key = your_openai_api_key
 ```
 
-or
-Create a file called `geminiapirc` in `~/.config` with your SECRET_KEY.
-
-```bash
-[gemini]
-api_key = ...
-```
-
-You can also optionally specify: organization, base_url, model and temperature.
-
-5. Set the LLM which you are going to use (you can choose between `openai` and `gemini`).
-
-```bash
-nano ~/.oh-my-zsh/custom/plugins/zsh_codex/zsh_codex.plugin.zsh
-```
-
-Set the `api` variable to `openai` or `gemini`.
+In this configuration file, you can define multiple services with their own configurations. The required and optional parameters of the `api_type` are specified in `services/sevices.py`. Choose which service to use in the `[service]` section.
 
 6. Run `zsh`, start typing and complete it using `^X`!
 7. If you use virtual environments you can set `ZSH_CODEX_PYTHON` to python executable where `openai` or `google-generativeai` is installed.
