@@ -92,6 +92,7 @@ class GoogleGenAIClient(BaseClient):
         response = chat.send_message(prompt)
         return response.text
 
+
 class GroqClient(BaseClient):
     """
     config keys:
@@ -129,10 +130,49 @@ class GroqClient(BaseClient):
             temperature=float(self.config.get("temperature", 1.0)),
         )
         return response.choices[0].message.content
+
+
+class MistralClient(BaseClient):
+    """
+    config keys:
+        - api_type="mistral"
+        - api_key (required)
+        - model (optional): defaults to "codestral-latest"
+        - temperature (optional): defaults to 1.0.
+    """
     
+    api_type = "mistral"
+    default_model = os.getenv("MISTRAL_DEFAULT_MODEL", "codestral-latest")
+    
+    def __init__(self, config: dict):
+        try:
+            from mistralai import Mistral
+        except ImportError:
+            print(
+                "Mistral library is not installed. Please install it using 'pip install mistralai'"
+            )
+            sys.exit(1)
+        
+        self.config = config
+        self.config["model"] = self.config.get("model", self.default_model)
+        self.client = Mistral(
+            api_key=self.config["api_key"],
+        )
+        
+    def get_completion(self, full_command: str) -> str:
+        response = self.client.chat.complete(
+            model=self.config["model"],
+            messages=[
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": full_command},
+            ],
+            temperature=float(self.config.get("temperature", 1.0)),
+        )
+        return response.choices[0].message.content
+
 
 class ClientFactory:
-    api_types = [OpenAIClient.api_type, GoogleGenAIClient.api_type, GroqClient.api_type]
+    api_types = [OpenAIClient.api_type, GoogleGenAIClient.api_type, GroqClient.api_type, MistralClient.api_type]
 
     @classmethod
     def create(cls):
@@ -152,6 +192,8 @@ class ClientFactory:
                 return GoogleGenAIClient(config)
             case GroqClient.api_type:
                 return GroqClient(config)
+            case MistralClient.api_type:
+                return MistralClient(config)
             case _:
                 raise KeyError(
                     f"Specified API type {api_type} is not one of the supported services {cls.api_types}"
