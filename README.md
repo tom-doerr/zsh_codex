@@ -87,20 +87,37 @@ Without oh-my-zsh:
    Example:
 
 ```ini
+; Primary service configuration
+; Set 'service' to match one of the defined sections below.
 [service]
-service = ollama_local ; the active service
+service = groq_service
 
-; api_type: Mandatory for every service. Choose between "openai" and "gemeni"
-
-[ollama_local] ; this can be any name
-api_type = openai ; check services/services.py for available parameters for this api_type
+; Example configuration for a self-hosted Ollama service.
+[my_ollama]
+api_type = openai
 api_key = dummy_key
 model = llama3.1
 base_url = http://localhost:11434/v1
 
-[openai]
+; OpenAI service configuration
+; Provide the 'api_key' and specify a 'model' if needed.
+[openai_service]
 api_type = openai
-api_key = your_openai_api_key
+api_key = <openai_apikey>
+
+; Groq service configuration
+; Provide the 'api_key'.
+[groq_service]
+api_type = groq
+api_key = <groq_apikey>
+model = gemma2-9b-it
+
+; Mistral service configuration
+; Provide the 'api_key'.
+[mistral_service]
+api_type = mistral
+api_key = <mistral_apikey>
+model = mistral-small-latest
 ```
 
 In this configuration file, you can define multiple services with their own configurations. The required and optional parameters of the `api_type` are specified in `services/sevices.py`. Choose which service to use in the `[service]` section.
