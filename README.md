@@ -47,7 +47,7 @@ This is a ZSH plugin that enables you to use AI powered code completion in the c
 
 ### Manual Installation
 
-1. Install the OpenAI package or the Google package.
+1. Install the OpenAI package, the Google package, or boto3.
 
 ```bash
 pip3 install openai
@@ -57,6 +57,12 @@ or
 
 ```bash
 pip3 install google-generativeai
+```
+
+or
+
+```bash
+pip3 install boto3
 ```
 
 2. Download the ZSH plugin.

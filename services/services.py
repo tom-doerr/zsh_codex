@@ -170,9 +170,76 @@ class MistralClient(BaseClient):
         )
         return response.choices[0].message.content
 
+class AmazonBedrock(BaseClient):
+    """
+    config keys:
+        - api_type="bedrock"
+        - aws_region (optional): defaults to environment variable AWS_REGION
+        - aws_access_key_id (optional): defaults to environment variable AWS_ACCESS_KEY_ID
+        - aws_secret_access_key (optional): defaults to environment variable AWS_SECRET_ACCESS_KEY
+        - aws_session_token (optional): defaults to environment variable AWS_SESSION_TOKEN
+        - model (optional): defaults to "anthropic.claude-3-5-sonnet-20240620-v1:0" or environment variable BEDROCK_DEFAULT_MODEL
+        - temperature (optional): defaults to 1.0.
+    """
+
+    api_type = "bedrock"
+    default_model = os.getenv("BEDROCK_DEFAULT_MODEL", "anthropic.claude-3-5-sonnet-20240620-v1:0")
+
+    def __init__(self, config: dict):
+        try:
+            import boto3
+        except ImportError:
+            print(
+                "Boto3 library is not installed. Please install it using 'pip install boto3'"
+            )
+            sys.exit(1)
+
+        self.config = config
+        self.config["model"] = self.config.get("model", self.default_model)
+
+        session_kwargs = {}
+        if "aws_region" in config:
+            session_kwargs["region_name"] = config["aws_region"]
+        if "aws_access_key_id" in config:
+            session_kwargs["aws_access_key_id"] = config["aws_access_key_id"]
+        if "aws_secret_access_key" in config:
+            session_kwargs["aws_secret_access_key"] = config["aws_secret_access_key"]
+        if "aws_session_token" in config:
+            session_kwargs["aws_session_token"] = config["aws_session_token"]
+
+        self.client = boto3.client("bedrock-runtime", **session_kwargs)
+
+    def get_completion(self, full_command: str) -> str:
+        import json
+
+        messages = [
+            {"role": "user", "content": full_command}
+        ]
+
+        # Format request body based on model type
+        if "claude" in self.config["model"].lower():
+            body = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 1000,
+                "system": self.system_prompt,
+                "messages": messages,
+                "temperature": float(self.config.get("temperature", 1.0))
+            }
+        else:
+            raise ValueError(f"Unsupported model: {self.config['model']}")
+
+        response = self.client.invoke_model(
+            modelId=self.config["model"],
+            body=json.dumps(body)
+        )
+
+        response_body = json.loads(response['body'].read())
+        return response_body["content"][0]["text"]
+
+
 
 class ClientFactory:
-    api_types = [OpenAIClient.api_type, GoogleGenAIClient.api_type, GroqClient.api_type, MistralClient.api_type]
+    api_types = [OpenAIClient.api_type, GoogleGenAIClient.api_type, GroqClient.api_type, MistralClient.api_type, AmazonBedrock.api_type]
 
     @classmethod
     def create(cls):
@@ -194,6 +261,8 @@ class ClientFactory:
                 return GroqClient(config)
             case MistralClient.api_type:
                 return MistralClient(config)
+            case AmazonBedrock.api_type:
+                return AmazonBedrock(config)
             case _:
                 raise KeyError(
                     f"Specified API type {api_type} is not one of the supported services {cls.api_types}"
