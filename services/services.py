@@ -255,6 +255,8 @@ class ClientFactory:
     def create(cls):
 
         service = "openai_service"
+        api_type = "openai"
+        config = {"api_type": api_type}  # Default configuration
 
         if os.path.exists(CONFIG_PATH):
             config_parser = ConfigParser()
@@ -266,6 +268,7 @@ class ClientFactory:
                 raise KeyError(f"Config for service {service} is not defined")
 
         api_type = config["api_type"]
+
         match api_type:
             case OpenAIClient.api_type:
                 return OpenAIClient(config)
