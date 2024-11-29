@@ -253,13 +253,17 @@ class ClientFactory:
 
     @classmethod
     def create(cls):
-        config_parser = ConfigParser()
-        config_parser.read(CONFIG_PATH)
-        service = config_parser["service"]["service"]
-        try:
-            config = {k: v for k, v in config_parser[service].items()}
-        except KeyError:
-            raise KeyError(f"Config for service {service} is not defined")
+
+        service = "openai_service"
+
+        if os.path.exists(CONFIG_PATH):
+            config_parser = ConfigParser()
+            config_parser.read(CONFIG_PATH)
+            service = config_parser.get("service", "service", fallback="openai_service")
+            try:
+                config = {k: v for k, v in config_parser[service].items()}
+            except KeyError:
+                raise KeyError(f"Config for service {service} is not defined")
 
         api_type = config["api_type"]
         match api_type:
