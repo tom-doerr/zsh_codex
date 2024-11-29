@@ -11,7 +11,7 @@ class BaseClient(ABC):
     """Base class for all clients"""
 
     api_type: str = None
-    system_prompt = "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation. Do not put completed command in a code block."
+    system_prompt = "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation. Do not put comments."
 
     @abstractmethod
     def get_completion(self, full_command: str) -> str:
@@ -44,7 +44,7 @@ class OpenAIClient(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
         self.client = OpenAI(
-            api_key=self.config["api_key"],
+            api_key=os.getenv("OPENAI_API_KEY", self.config.get("api_key")),
             base_url=self.config.get("base_url", "https://api.openai.com/v1"),
             organization=self.config.get("organization"),
         )
@@ -82,7 +82,9 @@ class GoogleGenAIClient(BaseClient):
             sys.exit(1)
 
         self.config = config
-        genai.configure(api_key=self.config["api_key"])
+        genai.configure(
+            api_key=os.getenv("GOOGLE_GENAI_API_KEY", self.config.get("api_key"))
+        )
         self.config["model"] = config.get("model", self.default_model)
         self.model = genai.GenerativeModel(self.config["model"])
 
@@ -101,10 +103,10 @@ class GroqClient(BaseClient):
         - model (optional): defaults to "llama-3.2-11b-text-preview"
         - temperature (optional): defaults to 1.0.
     """
-    
+
     api_type = "groq"
     default_model = os.getenv("GROQ_DEFAULT_MODEL", "llama-3.2-11b-text-preview")
-    
+
     def __init__(self, config: dict):
         try:
             from groq import Groq
@@ -117,9 +119,9 @@ class GroqClient(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
         self.client = Groq(
-            api_key=self.config["api_key"],
+            api_key=os.getenv("GROQ_API_KEY", self.config.get("api_key")),
         )
-    
+
     def get_completion(self, full_command: str) -> str:
         response = self.client.chat.completions.create(
             model=self.config["model"],
@@ -140,10 +142,10 @@ class MistralClient(BaseClient):
         - model (optional): defaults to "codestral-latest"
         - temperature (optional): defaults to 1.0.
     """
-    
+
     api_type = "mistral"
     default_model = os.getenv("MISTRAL_DEFAULT_MODEL", "codestral-latest")
-    
+
     def __init__(self, config: dict):
         try:
             from mistralai import Mistral
@@ -152,13 +154,13 @@ class MistralClient(BaseClient):
                 "Mistral library is not installed. Please install it using 'pip install mistralai'"
             )
             sys.exit(1)
-        
+
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
         self.client = Mistral(
-            api_key=self.config["api_key"],
+            api_key=os.getenv("MISTRAL_API_KEY", self.config.get("api_key")),
         )
-        
+
     def get_completion(self, full_command: str) -> str:
         response = self.client.chat.complete(
             model=self.config["model"],
@@ -169,6 +171,7 @@ class MistralClient(BaseClient):
             temperature=float(self.config.get("temperature", 1.0)),
         )
         return response.choices[0].message.content
+
 
 class AmazonBedrock(BaseClient):
     """
@@ -183,7 +186,9 @@ class AmazonBedrock(BaseClient):
     """
 
     api_type = "bedrock"
-    default_model = os.getenv("BEDROCK_DEFAULT_MODEL", "anthropic.claude-3-5-sonnet-20240620-v1:0")
+    default_model = os.getenv(
+        "BEDROCK_DEFAULT_MODEL", "anthropic.claude-3-5-sonnet-20240620-v1:0"
+    )
 
     def __init__(self, config: dict):
         try:
@@ -197,24 +202,25 @@ class AmazonBedrock(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
 
-        session_kwargs = {}
-        if "aws_region" in config:
-            session_kwargs["region_name"] = config["aws_region"]
-        if "aws_access_key_id" in config:
-            session_kwargs["aws_access_key_id"] = config["aws_access_key_id"]
-        if "aws_secret_access_key" in config:
-            session_kwargs["aws_secret_access_key"] = config["aws_secret_access_key"]
-        if "aws_session_token" in config:
-            session_kwargs["aws_session_token"] = config["aws_session_token"]
+        session_kwargs = {
+            "region_name": os.getenv("AWS_REGION", config.get("aws_region")),
+            "aws_access_key_id": os.getenv(
+                "AWS_ACCESS_KEY_ID", config.get("aws_access_key_id")
+            ),
+            "aws_secret_access_key": os.getenv(
+                "AWS_SECRET_ACCESS_KEY", config.get("aws_secret_access_key")
+            ),
+            "aws_session_token": os.getenv(
+                "AWS_SESSION_TOKEN", config.get("aws_session_token")
+            ),
+        }
 
         self.client = boto3.client("bedrock-runtime", **session_kwargs)
 
     def get_completion(self, full_command: str) -> str:
         import json
 
-        messages = [
-            {"role": "user", "content": full_command}
-        ]
+        messages = [{"role": "user", "content": full_command}]
 
         # Format request body based on model type
         if "claude" in self.config["model"].lower():
@@ -223,23 +229,27 @@ class AmazonBedrock(BaseClient):
                 "max_tokens": 1000,
                 "system": self.system_prompt,
                 "messages": messages,
-                "temperature": float(self.config.get("temperature", 1.0))
+                "temperature": float(self.config.get("temperature", 1.0)),
             }
         else:
             raise ValueError(f"Unsupported model: {self.config['model']}")
 
         response = self.client.invoke_model(
-            modelId=self.config["model"],
-            body=json.dumps(body)
+            modelId=self.config["model"], body=json.dumps(body)
         )
 
-        response_body = json.loads(response['body'].read())
+        response_body = json.loads(response["body"].read())
         return response_body["content"][0]["text"]
 
 
-
 class ClientFactory:
-    api_types = [OpenAIClient.api_type, GoogleGenAIClient.api_type, GroqClient.api_type, MistralClient.api_type, AmazonBedrock.api_type]
+    api_types = [
+        OpenAIClient.api_type,
+        GoogleGenAIClient.api_type,
+        GroqClient.api_type,
+        MistralClient.api_type,
+        AmazonBedrock.api_type,
+    ]
 
     @classmethod
     def create(cls):
