@@ -11,7 +11,7 @@ class BaseClient(ABC):
     """Base class for all clients"""
 
     api_type: str = None
-    system_prompt = "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation. Do not put comments."
+    system_prompt = "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation. Do not put completed command in a code block."
 
     @abstractmethod
     def get_completion(self, full_command: str) -> str:
@@ -82,8 +82,10 @@ class GoogleGenAIClient(BaseClient):
             sys.exit(1)
 
         self.config = config
-        genai.configure(
-            api_key=os.getenv("GOOGLE_GENAI_API_KEY", self.config.get("api_key"))
+        (
+            genai.configure(
+                api_key=os.getenv("GOOGLE_GENAI_API_KEY", self.config.get("api_key"))
+            ),
         )
         self.config["model"] = config.get("model", self.default_model)
         self.model = genai.GenerativeModel(self.config["model"])
@@ -119,7 +121,7 @@ class GroqClient(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
         self.client = Groq(
-            api_key=os.getenv("GROQ_API_KEY", self.config.get("api_key")),
+            api_key=self.config["api_key"],
         )
 
     def get_completion(self, full_command: str) -> str:
@@ -158,7 +160,7 @@ class MistralClient(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
         self.client = Mistral(
-            api_key=os.getenv("MISTRAL_API_KEY", self.config.get("api_key")),
+            api_key=self.config["api_key"],
         )
 
     def get_completion(self, full_command: str) -> str:
@@ -202,18 +204,15 @@ class AmazonBedrock(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
 
-        session_kwargs = {
-            "region_name": os.getenv("AWS_REGION", config.get("aws_region")),
-            "aws_access_key_id": os.getenv(
-                "AWS_ACCESS_KEY_ID", config.get("aws_access_key_id")
-            ),
-            "aws_secret_access_key": os.getenv(
-                "AWS_SECRET_ACCESS_KEY", config.get("aws_secret_access_key")
-            ),
-            "aws_session_token": os.getenv(
-                "AWS_SESSION_TOKEN", config.get("aws_session_token")
-            ),
-        }
+        session_kwargs = {}
+        if "aws_region" in config:
+            session_kwargs["region_name"] = config["aws_region"]
+        if "aws_access_key_id" in config:
+            session_kwargs["aws_access_key_id"] = config["aws_access_key_id"]
+        if "aws_secret_access_key" in config:
+            session_kwargs["aws_secret_access_key"] = config["aws_secret_access_key"]
+        if "aws_session_token" in config:
+            session_kwargs["aws_session_token"] = config["aws_session_token"]
 
         self.client = boto3.client("bedrock-runtime", **session_kwargs)
 
@@ -253,21 +252,44 @@ class ClientFactory:
 
     @classmethod
     def create(cls):
+        config_parser = ConfigParser()
 
-        service = "openai_service"
-        api_type = "openai"
-        config = {"api_type": api_type}  # Default configuration
+        if not os.path.exists(CONFIG_PATH):
+            # Default to OpenAI if config file is absent
+            config = {"api_type": "openai", "api_key": os.getenv("OPENAI_API_KEY")}
+            if not config["api_key"]:
+                print(
+                    "API key for OpenAI is missing. Please set the OPENAI_API_KEY environment variable."
+                )
+                sys.exit(1)
+            return OpenAIClient(config)
 
-        if os.path.exists(CONFIG_PATH):
-            config_parser = ConfigParser()
-            config_parser.read(CONFIG_PATH)
-            service = config_parser.get("service", "service", fallback="openai_service")
-            try:
-                config = {k: v for k, v in config_parser[service].items()}
-            except KeyError:
-                raise KeyError(f"Config for service {service} is not defined")
+        config_parser.read(CONFIG_PATH)
 
-        api_type = config["api_type"]
+        if "service" not in config_parser or "service" not in config_parser["service"]:
+            print(
+                "Service section or service key is missing in the configuration file."
+            )
+            sys.exit(1)
+
+        service = config_parser["service"].get("service")
+        if not service or service not in config_parser:
+            print(
+                f"Config for service {service} is not defined in the configuration file."
+            )
+            sys.exit(1)
+
+        config = {k: v for k, v in config_parser[service].items()}
+        if "api_key" not in config:
+            print(f"API key is missing for the {service} service.")
+            sys.exit(1)
+
+        api_type = config.get("api_type")
+        if api_type not in cls.api_types:
+            print(
+                f"Specified API type {api_type} is not one of the supported services {cls.api_types}."
+            )
+            sys.exit(1)
 
         match api_type:
             case OpenAIClient.api_type:
@@ -281,6 +303,7 @@ class ClientFactory:
             case AmazonBedrock.api_type:
                 return AmazonBedrock(config)
             case _:
-                raise KeyError(
-                    f"Specified API type {api_type} is not one of the supported services {cls.api_types}"
+                print(
+                    f"Specified API type {api_type} is not one of the supported services {cls.api_types}."
                 )
+                sys.exit(1)
