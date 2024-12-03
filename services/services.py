@@ -11,7 +11,11 @@ class BaseClient(ABC):
     """Base class for all clients"""
 
     api_type: str = None
-    system_prompt = "You are a zsh shell expert, please help me complete the following command, you should only output the completed command, no need to include any other explanation. Do not put completed command in a code block."
+    system_prompt = (
+        "You are a zsh shell expert, please help me complete the following command, "
+        "you should only output the completed command, no need to include any other explanation. "
+        "Do not put completion in quotes."
+    )
 
     @abstractmethod
     def get_completion(self, full_command: str) -> str:
@@ -82,10 +86,8 @@ class GoogleGenAIClient(BaseClient):
             sys.exit(1)
 
         self.config = config
-        (
-            genai.configure(
-                api_key=os.getenv("GOOGLE_GENAI_API_KEY", self.config.get("api_key"))
-            ),
+        genai.configure(
+            api_key=os.getenv("GOOGLE_GENAI_API_KEY", self.config.get("api_key"))
         )
         self.config["model"] = config.get("model", self.default_model)
         self.model = genai.GenerativeModel(self.config["model"])
@@ -121,7 +123,7 @@ class GroqClient(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
         self.client = Groq(
-            api_key=self.config["api_key"],
+            api_key=os.getenv("GROQ_API_KEY", self.config.get("api_key"))
         )
 
     def get_completion(self, full_command: str) -> str:
@@ -160,7 +162,7 @@ class MistralClient(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
         self.client = Mistral(
-            api_key=self.config["api_key"],
+            api_key=os.getenv("MISTRAL_API_KEY", self.config.get("api_key"))
         )
 
     def get_completion(self, full_command: str) -> str:
@@ -204,17 +206,15 @@ class AmazonBedrock(BaseClient):
         self.config = config
         self.config["model"] = self.config.get("model", self.default_model)
 
-        session_kwargs = {}
-        if "aws_region" in config:
-            session_kwargs["region_name"] = config["aws_region"]
-        if "aws_access_key_id" in config:
-            session_kwargs["aws_access_key_id"] = config["aws_access_key_id"]
-        if "aws_secret_access_key" in config:
-            session_kwargs["aws_secret_access_key"] = config["aws_secret_access_key"]
-        if "aws_session_token" in config:
-            session_kwargs["aws_session_token"] = config["aws_session_token"]
-
-        self.client = boto3.client("bedrock-runtime", **session_kwargs)
+        session_kwargs = {
+            "region_name": config.get("aws_region"),
+            "aws_access_key_id": config.get("aws_access_key_id"),
+            "aws_secret_access_key": config.get("aws_secret_access_key"),
+            "aws_session_token": config.get("aws_session_token"),
+        }
+        self.client = boto3.client(
+            "bedrock-runtime", **{k: v for k, v in session_kwargs.items() if v}
+        )
 
     def get_completion(self, full_command: str) -> str:
         import json
@@ -236,7 +236,6 @@ class AmazonBedrock(BaseClient):
         response = self.client.invoke_model(
             modelId=self.config["model"], body=json.dumps(body)
         )
-
         response_body = json.loads(response["body"].read())
         return response_body["content"][0]["text"]
 
@@ -281,8 +280,10 @@ class ClientFactory:
 
         config = {k: v for k, v in config_parser[service].items()}
         if "api_key" not in config:
-            print(f"API key is missing for the {service} service.")
-            sys.exit(1)
+            config["api_key"] = os.getenv(f"{service.upper()}_API_KEY")
+            if not config["api_key"]:
+                print(f"API key is missing for the {service} service.")
+                sys.exit(1)
 
         api_type = config.get("api_type")
         if api_type not in cls.api_types:
@@ -291,19 +292,12 @@ class ClientFactory:
             )
             sys.exit(1)
 
-        match api_type:
-            case OpenAIClient.api_type:
-                return OpenAIClient(config)
-            case GoogleGenAIClient.api_type:
-                return GoogleGenAIClient(config)
-            case GroqClient.api_type:
-                return GroqClient(config)
-            case MistralClient.api_type:
-                return MistralClient(config)
-            case AmazonBedrock.api_type:
-                return AmazonBedrock(config)
-            case _:
-                print(
-                    f"Specified API type {api_type} is not one of the supported services {cls.api_types}."
-                )
-                sys.exit(1)
+        client_classes = {
+            OpenAIClient.api_type: OpenAIClient,
+            GoogleGenAIClient.api_type: GoogleGenAIClient,
+            GroqClient.api_type: GroqClient,
+            MistralClient.api_type: MistralClient,
+            AmazonBedrock.api_type: AmazonBedrock,
+        }
+
+        return client_classes[api_type](config)
