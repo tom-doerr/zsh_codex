@@ -175,6 +175,21 @@ git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins
     <a href="https://www.buymeacoffee.com/TomDoerr" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 </p>
 
+## Passing in context
+
+Since the current filesystem is not passed into the ai you will need to either
+A. Pass in all context in your descriptive command
+B. Use a command to collect the context
+
+In order for option B to work you will need to first add `export ZSH_CODEX_PREEXECUTE_COMMENT="true"` to your .zshrc file to enable the feature. 
+
+> [!WARNING]
+> This will run your prompt using zsh each time before using it, which could potentially modify your system when you hit ^X.
+
+Once you've done that and restarted your shell you can do things like this:
+
+`# git add all files. Also commit the current changeset with a descriptive message based on $(git diff). Then git push`
+
 ## More usage examples
 
 <p align="center">
