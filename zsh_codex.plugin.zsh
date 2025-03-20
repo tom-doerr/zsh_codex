@@ -10,7 +10,7 @@ create_completion() {
     # Get the text typed until now.
     local text=$BUFFER
     if [[ "$ZSH_CODEX_PREEXECUTE_COMMENT" == "true" ]]; then
-        text="$(echo -n "echo \"$text\"" | bash)"
+        text="$(echo -n "echo \"$text\"" | zsh)"
     fi
     local ZSH_CODEX_PYTHON="${ZSH_CODEX_PYTHON:-python3}"
     local completion=$(echo -n "$text" | $ZSH_CODEX_PYTHON $_ZSH_CODEX_REPO/create_completion.py $CURSOR)
