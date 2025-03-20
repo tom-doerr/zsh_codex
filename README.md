@@ -178,10 +178,10 @@ git clone https://github.com/tom-doerr/zsh_codex.git ~/.oh-my-zsh/custom/plugins
 ## Passing in context
 
 Since the current filesystem is not passed into the ai you will need to either
-A. Pass in all context in your descriptive command
-B. Use a command to collect the context
+1. Pass in all context in your descriptive command
+2. Use a command to collect the context
 
-In order for option B to work you will need to first add `export ZSH_CODEX_PREEXECUTE_COMMENT="true"` to your .zshrc file to enable the feature. 
+In order for option 2 to work you will need to first add `export ZSH_CODEX_PREEXECUTE_COMMENT="true"` to your .zshrc file to enable the feature. 
 
 > [!WARNING]
 > This will run your prompt using zsh each time before using it, which could potentially modify your system when you hit ^X.
